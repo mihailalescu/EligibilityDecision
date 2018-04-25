@@ -1,0 +1,11 @@
+<Context>
+	<Resource name="jdbc/eligibility" 
+		auth="Container"
+		type="javax.sql.DataSource"
+		username="root"
+		password="bigsecret"
+		driverClassName="com.mysql.jdbc.Driver"
+		url="jdbc:mysql://localhost:3306/cardApplication"
+		maxActive="15"
+		maxIdle="3"/>
+</Context>
