@@ -10,7 +10,7 @@
 
 	<properties>
 		<jersey.version>2.21.1</jersey.version>
-		<docker.registry>https://hub.docker.commidnightmover/eligibility</docker.registry>
+		<docker.registry>https://hub.docker.com/midnightmover/eligibility</docker.registry>
 	</properties>
 
 	<dependencies>
@@ -87,32 +87,56 @@
 
 			<plugins>
 				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-war-plugin</artifactId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.7.0</version>
 					<configuration>
-						<webXml>WebContent/WEB-INF/web.xml</webXml>
+						<source>1.8</source>
+						<target>1.8</target>
 					</configuration>
 				</plugin>
-				<!-- <plugin> <groupId>com.spotify</groupId> <artifactId>docker-maven-plugin</artifactId> 
-					<version>1.0.0</version> <executions> <execution> <phase>package</phase> 
-					<goals> <goal>build</goal> </goals> </execution> </executions> <configuration> 
-					<imageName>eligibility/${project.artifactId}</imageName> <baseImage>openjdk:8-jre-alpine</baseImage> 
-					<entryPoint>["java","-jar","/${project.build.finalName}.jar"]</entryPoint> 
-					<resources> <! copy the service's jar file from target into the root directory 
-					of the image >> <resource> <targetPath>/</targetPath> <directory>${project.build.directory}</directory> 
-					<include>${project.build.finalName}.jar</include> </resource> </resources> 
-					</configuration> <! <configuration> <dockerDirectory>${project.basedir}</dockerDirectory> 
-					<imageName>${docker.registry}/r/midnightmover/eligibility/${project.artifactId}:${git.commit.id.abbrev}</imageName> 
-					<pushImage>true</pushImage> </configuration> ..> </plugin> -->
-				<!-- <plugin> <groupId>io.fabric8</groupId> <artifactId>docker-maven-plugin</artifactId> 
-					<version>0.25.2</version> <configuration> <images> < A single's image configuration 
-					-> <image> </image> </images> </configuration> < Connect start/stop to pre- 
-					and post-integration-test phase, respectively if you want to start your docker 
-					containers during integration tests -> <executions> <execution> <id>start</id> 
-					<phase>pre-integration-test</phase> <goals> <- "build" should be used to 
-					create the images with the artifact >> <goal>build</goal> <goal>start</goal> 
-					</goals> </execution> <execution> <id>stop</id> <phase>post-integration-test</phase> 
-					<goals> <goal>stop</goal> </goals> </execution> </executions> </plugin> -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-war-plugin</artifactId>
+				</plugin>
+				<plugin>
+					<groupId>io.fabric8</groupId>
+					<artifactId>docker-maven-plugin</artifactId>
+					<version>0.25.2</version>
+					<extensions>true</extensions>
+					<configuration>
+						<images>
+							<image>
+								<name>midnightmover/eligibility</name>
+ 								
+								<build>
+									<dockerFile>eligibilityDecision/Dockerfile</dockerFile>
+									<filter>@</filter>
+								</build>
+								
+							</image>
+						</images>
+					</configuration>
+					<!-- Connect start/stop to pre- and post-integration-test phase, respectively 
+						if you want to start your docker containers during integration tests -->
+					<executions>
+						<execution>
+							<id>start</id>
+							<phase>pre-integration-test</phase>
+							<goals>
+								<!-- "build" should be used to create the images with the artifact -->
+								<goal>build</goal>
+								<goal>start</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>stop</id>
+							<phase>post-integration-test</phase>
+							<goals>
+								<goal>stop</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<!-- FROM tomcat:8.0.20-jre8 COPY ${project.basedir}/1.0-SNAPSHOT/my-app-1.0-SNAPSHOT.war 
